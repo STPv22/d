@@ -1,8 +1,55 @@
-import { getScaledX, getScaledY, getScaledZ } from "../scaledres.js";
+import Scenes from "../scenes/Scenes.js";
+import AssetHandler from "../util/AssetHandler.js";
 
-export default class characterBase {
+export class characterBase {
   constructor(p) {
-    this.name = "tsukasa";
+    this.reset();
+  }
+
+  reset() {
+    this.name = "Tsukasa";
+    this.characterId = "test";
+    this.currentAnimation = "idle";
+    this.animationFrame = 0;
+    this.doubleCheckList = [];
+
+    this.characterModel = null;
+    this.characterAnimations = {};
+
+    this.initialized = false;
+
+    this.maxFallSpeed = 1;
+    this.fastFallMultiplier = 60; //meant to be percentage
+
+    this.posX = 0;
+    this.posY = -100;
+    this.posZ = 0;
+
+    this.velX = 0;
+    this.velY = 0;
+    this.velZ = 0;
+
+    this.width = 180;
+    this.height = 250;
+    this.depth = 150;
+
+    AssetHandler.regAsset(`models/${this.characterId}.json`, (res) => {
+      res.json()
+      .then((json) => {
+        console.log("Loaded character model", this.characterId);
+        this.characterModel = json;
+        console.log(this.characterModel);
+      })
+    });
+
+    AssetHandler.regAsset(`animations/${this.characterId}/idle.json`, (res) => {
+      res.json()
+      .then((animjson) => {
+        this.characterAnimations["idle"] = animjson;
+        console.log("Loaded character animation", this.characterId);
+      });
+    });
+
 
     this.upPressed = false;
     this.rightPressed = false;
@@ -12,18 +59,108 @@ export default class characterBase {
   }
 
   update(p) {
+    this.animationFrame++;
+    if (!this.characterAnimations[this.currentAnimation] || !this.characterModel) {
+      console.log("No animation or model loaded");
+      AssetHandler.loadedNum = 0;
+      Scenes.setScene("loading");
+      return 0;
+    }
+    if (this.animationFrame > this.characterAnimations[this.currentAnimation].animationTime) {
+      this.animationFrame = 0;
+    }
+
+    if (!this.characterModel) { //For some reason, the model doesnt load sometimes
+      return;
+    }
     this.handleKeyPressed();
 
+    if (this.upPressed) {
+      this.velY -= 0.5;
+    }
+    if (this.downPressed) {
+      this.velY += 0.5;
+    }
+    if (this.leftPressed) {
+      this.velX -= 0.5;
+    }
+    if (this.rightPressed) {
+      this.velX += 0.5;
+    }
+
     p.push();
-    p.translate(getScaledX(p, 0), getScaledY(p, -10), getScaledZ(p, 0));
-    p.box(100, 100, 100);
-    p.pop();
+    p.translate(this.posX, this.posY, this.posZ);
+    for (var i = 0; i < this.characterModel.length; i++) {
+      var m = this.characterModel[i];
+      //array.find
+      for (var j = 0; j < this.characterAnimations[this.currentAnimation].frames.length; j++) {
+        var f = this.characterAnimations[this.currentAnimation].frames[j];
+        if (f.doFrame) {
+          f = this.characterAnimations[this.currentAnimation].frames[f.doFrame];
+        }
+        if (!f.parts[m.id]) {
+          continue;
+        } else {
+          var anim = f.parts[m.id];
+        }
+        console.log(anim);
+        if (f.time == this.animationFrame) {
+          m.rotation.x = anim.rotation.x || m.rotation.x;
+          m.rotation.y = anim.rotation.y || m.rotation.y;
+          m.rotation.z = anim.rotation.z || m.rotation.z;
+          m.rotationOrigin.x = anim.rotationOrigin.x || m.rotationOrigin.x;
+          m.rotationOrigin.y = anim.rotationOrigin.y || m.rotationOrigin.y;
+          m.rotationOrigin.z = anim.rotationOrigin.z || m.rotationOrigin.z;
+          m.size.width = anim.size.width || m.size.width;
+          m.size.height = anim.size.height || m.size.height;
+          m.size.depth = anim.size.depth || m.size.depth;
+          m.x = anim.x || m.x;
+          m.y = anim.y || m.y;
+          m.z = anim.z || m.z;
+        }
+      }
+
+      p.push();
+      p.translate(m.x - m.rotationOrigin.x, m.y - m.rotationOrigin.y, m.z - m.rotationOrigin.z);
+      p.rotateX(m.rotation.x);
+      p.rotateY(m.rotation.y);
+      p.rotateZ(m.rotation.z);
+      p.translate(m.rotationOrigin.x, m.rotationOrigin.y, m.rotationOrigin.z);
+      p.fill(0, 0, 150);
+      p.stroke(0);
+      switch (m.type) {
+        case "box":
+          p.box(m.size.width, m.size.height, m.size.depth);
+          break;
+        default:
+          console.log("Unknown model type: " + m.type);
+          break;
+        }
+      p.pop();
+      }
+      p.pop();
+
+      this.velX *= 0.9;
+
+      this.posX += this.velX;
+      this.posY += this.velY;
+      return 1;
+  }
+
+  handleUndefined(check) {
+    if (check == (undefined || null || NaN || {})) {
+      return true;
+    }
+    return false;
   }
 
   handleKeyPressed() {
     onkeydown = (event) => {
       if (event.key == "ArrowUp") {
           this.upPressed = true;
+      }
+      if (event.key == "ArrowDown") {
+        this.downPressed = true;
       }
       if (event.key == "ArrowLeft") {
           this.leftPressed = true;
@@ -48,3 +185,6 @@ export default class characterBase {
     };
   }
 }
+
+var CharacterBase = new characterBase();
+export default CharacterBase;

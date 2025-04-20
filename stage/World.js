@@ -1,6 +1,4 @@
-import { getScaledX, getScaledY, getScaledZ } from '../scaledres.js';
-
-export default class World {
+class world {
     constructor() {
         this.hitboxes = [];
     }
@@ -15,9 +13,12 @@ export default class World {
             z: posz,
         }
         p.push();
-        p.translate(getScaledX(p, posx), getScaledY(p, posy), getScaledZ(p, posz));
-        p.box(getScaledX(p, x), getScaledY(p, y), getScaledZ(p, z));
+        p.translate(posx, posy, posz);
+        p.box(x, y, z);
         p.pop();
         this.hitboxes.push(info);
     }
 }
+
+var World = new world();
+export default World;

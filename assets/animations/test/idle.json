@@ -1,0 +1,49 @@
+{
+    "animationTime": 30,
+    "frames": [
+        {
+            "time": 0,
+            "parts": {
+                "head": {
+                    "x": 0,
+                    "y": -98,
+                    "z": 0,
+                    "rotationOrigin": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "rotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    }
+                }
+            }
+        },
+        {
+            "time": 15,
+            "parts": {
+                "head": {
+                    "x": 0,
+                    "y": -98,
+                    "z": 0,
+                    "rotationOrigin": {
+                        "x": -45,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "rotation": {
+                        "x": 45,
+                        "y": 0,
+                        "z": 0
+                    }
+                }
+            }
+        },
+        {
+            "time": 30,
+            "doFrame": 0
+        }
+    ]
+}
