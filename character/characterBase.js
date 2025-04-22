@@ -3,10 +3,6 @@ import AssetHandler from "../util/AssetHandler.js";
 
 export class characterBase {
   constructor(p) {
-    this.reset();
-  }
-
-  reset() {
     this.name = "Tsukasa";
     this.characterId = "test";
     this.currentAnimation = "idle";
@@ -61,10 +57,7 @@ export class characterBase {
   update(p) {
     this.animationFrame++;
     if (!this.characterAnimations[this.currentAnimation] || !this.characterModel) {
-      console.log("No animation or model loaded");
-      AssetHandler.loadedNum = 0;
-      Scenes.setScene("loading");
-      return 0;
+      return;
     }
     if (this.animationFrame > this.characterAnimations[this.currentAnimation].animationTime) {
       this.animationFrame = 0;
@@ -95,15 +88,18 @@ export class characterBase {
       //array.find
       for (var j = 0; j < this.characterAnimations[this.currentAnimation].frames.length; j++) {
         var f = this.characterAnimations[this.currentAnimation].frames[j];
+
         if (f.doFrame) {
           f = this.characterAnimations[this.currentAnimation].frames[f.doFrame];
         }
-        if (!f.parts[m.id]) {
-          continue;
-        } else {
+
+        try {
           var anim = f.parts[m.id];
+        } catch (e) {
+          console.log("Error in animation frame", e);
+          continue;
         }
-        console.log(anim);
+
         if (f.time == this.animationFrame) {
           m.rotation.x = anim.rotation.x || m.rotation.x;
           m.rotation.y = anim.rotation.y || m.rotation.y;

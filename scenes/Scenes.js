@@ -12,9 +12,6 @@ class scenes {
 
     display(p) {
         var s = this.currentScene.display(p);
-        if ( s == 0 || undefined) {
-            this.scene[this.currentScene].reset();
-        }
     }
 
     setScene(scene) {
