@@ -1,0 +1,3 @@
+percentage = (part/whole) * 100
+
+velocity = distance/time

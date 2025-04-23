@@ -34,7 +34,6 @@ export class characterBase {
       .then((json) => {
         console.log("Loaded character model", this.characterId);
         this.characterModel = json;
-        console.log(this.characterModel);
       })
     });
 
@@ -89,30 +88,25 @@ export class characterBase {
       for (var j = 0; j < this.characterAnimations[this.currentAnimation].frames.length; j++) {
         var f = this.characterAnimations[this.currentAnimation].frames[j];
 
-        if (f.doFrame) {
+        if (f.doFrame != undefined) {
           f = this.characterAnimations[this.currentAnimation].frames[f.doFrame];
         }
 
-        try {
-          var anim = f.parts[m.id];
-        } catch (e) {
-          console.log("Error in animation frame", e);
-          continue;
-        }
+        var anim = f.parts[m.id];
 
         if (f.time == this.animationFrame) {
-          m.rotation.x = anim.rotation.x || m.rotation.x;
-          m.rotation.y = anim.rotation.y || m.rotation.y;
-          m.rotation.z = anim.rotation.z || m.rotation.z;
-          m.rotationOrigin.x = anim.rotationOrigin.x || m.rotationOrigin.x;
-          m.rotationOrigin.y = anim.rotationOrigin.y || m.rotationOrigin.y;
-          m.rotationOrigin.z = anim.rotationOrigin.z || m.rotationOrigin.z;
-          m.size.width = anim.size.width || m.size.width;
-          m.size.height = anim.size.height || m.size.height;
-          m.size.depth = anim.size.depth || m.size.depth;
-          m.x = anim.x || m.x;
-          m.y = anim.y || m.y;
-          m.z = anim.z || m.z;
+          m.rotation.x ??= anim.rotation.x;
+          m.rotation.y ??= anim.rotation.y;
+          m.rotation.z ??= anim.rotation.z;
+          m.rotationOrigin.x ??= anim.rotationOrigin.x;
+          m.rotationOrigin.y ??= anim.rotationOrigin.y;
+          m.rotationOrigin.z ??= anim.rotationOrigin.z;
+          m.size.width ??= anim.size.width;
+          m.size.height ??= anim.size.height;
+          m.size.depth ??= anim.size.depth;
+          m.x ??= anim.x;
+          m.y ??= anim.y;
+          m.z ??= anim.z;
         }
       }
 
