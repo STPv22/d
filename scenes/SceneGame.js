@@ -1,7 +1,7 @@
 import SceneBase from "./SceneBase.js";
 
 import { resHeight, resWidth} from "../sketch.js";
-import CharacterBase, { characterBase } from "../character/characterBase.js";
+import CharacterBase from "../character/characterBase.js";
 import World from "../stage/World.js";
 
 export default class SceneGame extends SceneBase {

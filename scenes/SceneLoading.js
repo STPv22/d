@@ -8,10 +8,6 @@ export default class SceneLoading extends SceneBase {
     }
 
     display(p) {
-        if (AssetHandler.loadedNum >= AssetHandler.assetList.length) {
-            Scenes.setScene('game');
-            return;
-        }
         p.background(0);
         p.fill(255);
         p.textAlign(p.CENTER);
@@ -36,6 +32,10 @@ export default class SceneLoading extends SceneBase {
             AssetHandler.loadedNum++;
         });
         p.text(`${AssetHandler.loadedNum}/${AssetHandler.assetList.length}`, loadBox.x, loadBox.y + 100);
-        return 1;
+        
+        if (AssetHandler.loadedNum >= AssetHandler.assetList.length) {
+            Scenes.setScene('game');
+            return;
+        }
     }
 }

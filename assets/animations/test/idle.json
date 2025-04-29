@@ -6,7 +6,7 @@
             "parts": {
                 "head": {
                     "x": 0,
-                    "y": -98,
+                    "y": 0,
                     "z": 0,
                     "rotationOrigin": {
                         "x": 0,
@@ -26,16 +26,16 @@
             "parts": {
                 "head": {
                     "x": 0,
-                    "y": 98,
+                    "y": 0,
                     "z": 0,
                     "rotationOrigin": {
-                        "x": -45,
+                        "x": 0,
                         "y": 0,
                         "z": 0
                     },
                     "rotation": {
-                        "x": 45,
-                        "y": 0,
+                        "x": 0,
+                        "y": 45,
                         "z": 0
                     }
                 }

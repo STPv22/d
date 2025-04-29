@@ -1,5 +1,6 @@
 import Scenes from "../scenes/Scenes.js";
 import AssetHandler from "../util/AssetHandler.js";
+import { findClosestGreater, findClosestLess } from "../util/Math.js";
 
 export class characterBase {
   constructor(p) {
@@ -9,6 +10,7 @@ export class characterBase {
     this.animationFrame = 0;
     this.doubleCheckList = [];
 
+    this.characterModelData = null;
     this.characterModel = null;
     this.characterAnimations = {};
 
@@ -80,61 +82,107 @@ export class characterBase {
       this.velX += 0.5;
     }
 
-    p.push();
-    p.translate(this.posX, this.posY, this.posZ);
-    for (var i = 0; i < this.characterModel.length; i++) {
-      var m = this.characterModel[i];
-      //array.find
-      for (var j = 0; j < this.characterAnimations[this.currentAnimation].frames.length; j++) {
-        var f = this.characterAnimations[this.currentAnimation].frames[j];
+    //parse the animation and other logic
+    this.characterModelData = this.characterModel;
+    for (var i = 0; i < this.characterModelData.length; i++) {
+      var m = this.characterModelData[i];
 
-        if (f.doFrame != undefined) {
-          f = this.characterAnimations[this.currentAnimation].frames[f.doFrame];
-        }
+      var f = this.characterAnimations[this.currentAnimation].frames;
 
-        var anim = f.parts[m.id];
-
-        if (f.time == this.animationFrame) {
-          m.rotation.x ??= anim.rotation.x;
-          m.rotation.y ??= anim.rotation.y;
-          m.rotation.z ??= anim.rotation.z;
-          m.rotationOrigin.x ??= anim.rotationOrigin.x;
-          m.rotationOrigin.y ??= anim.rotationOrigin.y;
-          m.rotationOrigin.z ??= anim.rotationOrigin.z;
-          m.size.width ??= anim.size.width;
-          m.size.height ??= anim.size.height;
-          m.size.depth ??= anim.size.depth;
-          m.x ??= anim.x;
-          m.y ??= anim.y;
-          m.z ??= anim.z;
-        }
+      var lastFrame = findClosestLess(f, this.animationFrame);
+      var lastF = f[lastFrame];
+      var nextFrame = findClosestGreater(f, this.animationFrame);
+      var nextF = f[nextFrame];
+      if (lastF.doFrame != undefined) {
+        lastF.parts = f[lastF.doFrame].parts;
       }
-
+      if (nextF.doFrame != undefined) {
+        nextF.parts = f[nextF.doFrame].parts;
+      }
+      if (lastF == undefined || nextF == undefined) { 
+        continue;
+      } else if (lastFrame == nextFrame) {
+        m.x = lastF.parts?.[m.id]?.x || m.x;
+        m.y = lastF.parts?.[m.id]?.y || m.y;
+        m.z = lastF.parts?.[m.id]?.z || m.z;
+        m.rotation.x = lastF.parts?.[m.id]?.rotation?.x || m.rotation.x;
+        m.rotation.y = lastF.parts?.[m.id]?.rotation?.y || m.rotation.y;
+        m.rotation.z = lastF.parts?.[m.id]?.rotation?.z || m.rotation.z;
+        m.rotationOrigin.x = lastF.parts?.[m.id]?.rotationOrigin?.x || m.rotationOrigin.x;
+        m.rotationOrigin.y = lastF.parts?.[m.id]?.rotationOrigin?.y || m.rotationOrigin.y;
+        m.rotationOrigin.z = lastF.parts?.[m.id]?.rotationOrigin?.z || m.rotationOrigin.z;
+        m.size.width = lastF.parts?.[m.id]?.size?.width || m.size.width;
+        m.size.height = lastF.parts?.[m.id]?.size?.height || m.size.height;
+        m.size.depth = lastF.parts?.[m.id]?.size?.depth || m.size.depth;
+      } else {
+        //console.log("different frame");
+        if (lastF.time == this.animationFrame) {
+          if (lastF.parts[m.id] != undefined) {
+            m.x ||= lastF.parts[m.id].x;
+            m.y ||= lastF.parts[m.id].y;
+            m.z ||= lastF.parts[m.id].z;
+            m.rotation.x ||= lastF.parts[m.id].rotation.x;
+            m.rotation.y ||= lastF.parts[m.id].rotation.y;
+            m.rotation.z ||= lastF.parts[m.id].rotation.z;
+            m.rotationOrigin.x ||= lastF.parts[m.id].rotationOrigin.x;
+            m.rotationOrigin.y ||= lastF.parts[m.id].rotationOrigin.y;
+            m.rotationOrigin.z ||= lastF.parts[m.id].rotationOrigin.z;
+            m.size.width ||= lastF.parts[m.id].size.width;
+            m.size.height ||= lastF.parts[m.id].size.height;
+            m.size.depth ||= lastF.parts[m.id].size.depth;
+          }
+        } else if (nextF.time == this.animationFrame) {
+          if (nextF.parts[m.id] != undefined) {
+            m.x ||= nextF.parts[m.id].x;
+            m.y ||= nextF.parts[m.id].y;
+            m.z ||= nextF.parts[m.id].z;
+            m.rotation.x ||= nextF.parts[m.id].rotation.x;
+            m.rotation.y ||= nextF.parts[m.id].rotation.y;
+            m.rotation.z ||= nextF.parts[m.id].rotation.z;
+            m.rotationOrigin.x ||= nextF.parts[m.id].rotationOrigin.x;
+            m.rotationOrigin.y ||= nextF.parts[m.id].rotationOrigin.y;
+            m.rotationOrigin.z ||= nextF.parts[m.id].rotationOrigin.z;
+            m.size.width ||= nextF.parts[m.id].size.width;
+            m.size.height ||= nextF.parts[m.id].size.height;
+            m.size.depth ||= nextF.parts[m.id].size.depth;
+          }
+        } else {
+          if (nextF.parts[m.id] && nextF.parts[m.id]) {
+            
+          }
+        }
+        //console.log(lastF, nextF, this.animationFrame);
+        //console.log(m.rotation.y);
+      }
+      //render character
       p.push();
-      p.translate(m.x - m.rotationOrigin.x, m.y - m.rotationOrigin.y, m.z - m.rotationOrigin.z);
-      p.rotateX(m.rotation.x);
-      p.rotateY(m.rotation.y);
-      p.rotateZ(m.rotation.z);
-      p.translate(m.rotationOrigin.x, m.rotationOrigin.y, m.rotationOrigin.z);
-      p.fill(0, 0, 150);
-      p.stroke(0);
-      switch (m.type) {
-        case "box":
-          p.box(m.size.width, m.size.height, m.size.depth);
-          break;
-        default:
-          console.log("Unknown model type: " + m.type);
-          break;
-        }
-      p.pop();
-      }
-      p.pop();
+        p.translate(this.posX, this.posY, this.posZ);
 
-      this.velX *= 0.9;
+        p.push();
+          p.translate(m.x - m.rotationOrigin.x, m.y - m.rotationOrigin.y, m.z - m.rotationOrigin.z);
+          p.rotateX(m.rotation.x);
+          p.rotateY(m.rotation.y);
+          p.rotateZ(m.rotation.z);
+          p.translate(m.rotationOrigin.x, m.rotationOrigin.y, m.rotationOrigin.z);
+          p.fill(0, 0, 150);
+          p.stroke(0);
+          switch (m.type) {
+            case "box":
+              p.box(m.size.width, m.size.height, m.size.depth);
+              break;
+            default:
+              console.log("Unknown model type: " + m.type);
+              break;
+          }
+        p.pop();
+      p.pop();
+    }
+    //console.log("this.characterModelData", this.characterModelData);
 
-      this.posX += this.velX;
-      this.posY += this.velY;
-      return 1;
+    this.velX *= 0.9;
+
+    this.posX += this.velX;
+    this.posY += this.velY;
   }
 
   handleUndefined(check) {

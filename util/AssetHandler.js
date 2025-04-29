@@ -18,6 +18,10 @@ class assetHandler {
   }
 
   regAsset(assetLocation, onLoad) {
+    if (this.assetList.some((file) => file.assetPath === assetLocation)) {
+      console.log('Asset already registered:', assetLocation);
+      return;
+    }
     var file = {};
     file.assetPath = assetLocation;
     file.loaded = false;
