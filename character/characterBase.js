@@ -102,6 +102,7 @@ export class characterBase {
       if (lastF == undefined || nextF == undefined) { 
         continue;
       } else if (lastFrame == nextFrame) {
+        //console.log("same frame");
         m.x = lastF.parts?.[m.id]?.x || m.x;
         m.y = lastF.parts?.[m.id]?.y || m.y;
         m.z = lastF.parts?.[m.id]?.z || m.z;
@@ -116,40 +117,38 @@ export class characterBase {
         m.size.depth = lastF.parts?.[m.id]?.size?.depth || m.size.depth;
       } else {
         //console.log("different frame");
-        if (lastF.time == this.animationFrame) {
-          if (lastF.parts[m.id] != undefined) {
-            m.x ||= lastF.parts[m.id].x;
-            m.y ||= lastF.parts[m.id].y;
-            m.z ||= lastF.parts[m.id].z;
-            m.rotation.x ||= lastF.parts[m.id].rotation.x;
-            m.rotation.y ||= lastF.parts[m.id].rotation.y;
-            m.rotation.z ||= lastF.parts[m.id].rotation.z;
-            m.rotationOrigin.x ||= lastF.parts[m.id].rotationOrigin.x;
-            m.rotationOrigin.y ||= lastF.parts[m.id].rotationOrigin.y;
-            m.rotationOrigin.z ||= lastF.parts[m.id].rotationOrigin.z;
-            m.size.width ||= lastF.parts[m.id].size.width;
-            m.size.height ||= lastF.parts[m.id].size.height;
-            m.size.depth ||= lastF.parts[m.id].size.depth;
+        function doStuff(val1, val2, startVal, anim, operator) {
+          var fPercentUp = (anim - lastF.time) / (nextF.time - lastF.time);
+          var fPercentDown = (nextF.time - anim) / (nextF.time - lastF.time);
+          if (operator == "?") {
+            if (val1 >= val2) {
+              return fPercentDown * val1 ?? startVal;
+            } else {
+              return fPercentUp * val2 ?? startVal;
+            }
+          } else if (operator == "|") {
+            if (val1 >= val2) {
+              return fPercentDown * val1 || startVal;
+            } else {
+              return fPercentUp * val2 || startVal;
+            }
+          } else {
+            console.error("invalid operator!");
           }
-        } else if (nextF.time == this.animationFrame) {
-          if (nextF.parts[m.id] != undefined) {
-            m.x ||= nextF.parts[m.id].x;
-            m.y ||= nextF.parts[m.id].y;
-            m.z ||= nextF.parts[m.id].z;
-            m.rotation.x ||= nextF.parts[m.id].rotation.x;
-            m.rotation.y ||= nextF.parts[m.id].rotation.y;
-            m.rotation.z ||= nextF.parts[m.id].rotation.z;
-            m.rotationOrigin.x ||= nextF.parts[m.id].rotationOrigin.x;
-            m.rotationOrigin.y ||= nextF.parts[m.id].rotationOrigin.y;
-            m.rotationOrigin.z ||= nextF.parts[m.id].rotationOrigin.z;
-            m.size.width ||= nextF.parts[m.id].size.width;
-            m.size.height ||= nextF.parts[m.id].size.height;
-            m.size.depth ||= nextF.parts[m.id].size.depth;
-          }
-        } else {
-          if (nextF.parts[m.id] && nextF.parts[m.id]) {
-            
-          }
+        }
+        if (nextF.parts[m.id] && nextF.parts[m.id]) {
+          m.x = doStuff(lastF.parts?.[m.id]?.x, nextF.parts?.[m.id]?.x, m.x, this.animationFrame, "|");
+          m.y = doStuff(lastF.parts?.[m.id]?.y, nextF.parts?.[m.id]?.y, m.y, this.animationFrame, "|");
+          m.z = doStuff(lastF.parts?.[m.id]?.z, nextF.parts?.[m.id]?.z, m.z, this.animationFrame, "|");
+          m.rotation.x = doStuff(lastF.parts?.[m.id]?.rotation.x, nextF.parts?.[m.id]?.rotation.x, m.rotation.x, this.animationFrame, "?");
+          m.rotation.y = doStuff(lastF.parts?.[m.id]?.rotation.y, nextF.parts?.[m.id]?.rotation.y, m.rotation.y, this.animationFrame, "?");
+          m.rotation.z = doStuff(lastF.parts?.[m.id]?.rotation.z, nextF.parts?.[m.id]?.rotation.z, m.rotation.z, this.animationFrame, "?");
+          m.rotationOrigin.x = doStuff(lastF.parts?.[m.id]?.rotationOrigin.x, nextF.parts?.[m.id]?.rotationOrigin.x, m.rotationOrigin.x, this.animationFrame, "?");
+          m.rotationOrigin.y = doStuff(lastF.parts?.[m.id]?.rotationOrigin.y, nextF.parts?.[m.id]?.rotationOrigin.y, m.rotationOrigin.y, this.animationFrame, "?");
+          m.rotationOrigin.z = doStuff(lastF.parts?.[m.id]?.rotationOrigin.z, nextF.parts?.[m.id]?.rotationOrigin.z, m.rotationOrigin.z, this.animationFrame, "?");
+          m.size.width = doStuff(lastF.parts?.[m.id]?.size?.width, nextF.parts?.[m.id]?.size?.width, m.size.width, this.animationFrame, "|");
+          m.size.height = doStuff(lastF.parts?.[m.id]?.size?.height, nextF.parts?.[m.id]?.size?.height, m.size.height, this.animationFrame, "|");
+          m.size.depth = doStuff(lastF.parts?.[m.id]?.size?.depth, nextF.parts?.[m.id]?.size?.depth, m.size.depth, this.animationFrame, "|");
         }
         //console.log(lastF, nextF, this.animationFrame);
         //console.log(m.rotation.y);
