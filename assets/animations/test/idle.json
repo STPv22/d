@@ -1,5 +1,5 @@
 {
-    "animationTime": 30,
+    "animationTime": 60,
     "frames": [
         {
             "time": 0,
@@ -10,21 +10,16 @@
                     "z": 0,
                     "rotationOrigin": {
                         "x": 0,
-                        "y": 0,
+                        "y": -50,
                         "z": 0
                     },
                     "rotation": {
                         "x": 0,
                         "y": 0,
-                        "z": 0
+                        "z": 30
                     }
-                }
-            }
-        },
-        {
-            "time": 15,
-            "parts": {
-                "head": {
+                },
+                "body": {
                     "x": 0,
                     "y": 0,
                     "z": 0,
@@ -35,14 +30,79 @@
                     },
                     "rotation": {
                         "x": 0,
-                        "y": 45,
+                        "y": 0,
+                        "z": 45
+                    }
+                },
+                "waist": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0,
+                    "rotationOrigin": {
+                        "x": 0,
+                        "y": 50,
                         "z": 0
+                    },
+                    "rotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 45
                     }
                 }
             }
         },
         {
             "time": 30,
+            "parts": {
+                "head": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0,
+                    "rotationOrigin": {
+                        "x": 0,
+                        "y": -50,
+                        "z": 0
+                    },
+                    "rotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 30
+                    }
+                },
+                "body": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0,
+                    "rotationOrigin": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "rotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 30
+                    }
+                },
+                "waist": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0,
+                    "rotationOrigin": {
+                        "x": 0,
+                        "y": 50,
+                        "z": 0
+                    },
+                    "rotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 45
+                    }
+                }
+            }
+        },
+        {
+            "time": 60,
             "doFrame": 0
         }
     ]
